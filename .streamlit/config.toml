@@ -1,0 +1,17 @@
+[server]
+headless = true               # required on Streamlit Cloud
+enableCORS = false
+enableXsrfProtection = true
+maxUploadSize = 10            # MB
+
+[browser]
+gatherUsageStats = false      # disable telemetry
+
+[theme]
+# Matches your existing dark purple aesthetic
+base                   = "dark"
+primaryColor           = "#f093fb"
+backgroundColor        = "#0f0c29"
+secondaryBackgroundColor = "#302b63"
+textColor              = "#ffffff"
+font                   = "sans serif"
