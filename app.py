@@ -2,9 +2,6 @@ import streamlit as st
 from pathlib import Path
 import time as time_mod
 
-import os
-os.makedirs("database", exist_ok=True)
-
 st.set_page_config(page_title="Kids Learning Universe", page_icon="🌟",
                    layout="wide", initial_sidebar_state="collapsed")
 
@@ -20,13 +17,11 @@ except Exception as e:
     DB_OK = False
     print(f"DB IMPORT/INIT ERROR: {e}")
 
-# ─── PROGRESS CONSTANTS ────────────────────────────────────────────────────────
 SKILL_GAIN_NORMAL = 1
 SKILL_GAIN_STREAK = 2
 XP_PER_CORRECT    = 8
 XP_PER_STAR       = 5
 
-# ─── CSS ───────────────────────────────────────────────────────────────────────
 def load_css():
     st.markdown("""
     <style>
@@ -35,7 +30,6 @@ def load_css():
     .stApp{background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;}
     .main .block-container{padding-top:1rem;}
     #MainMenu,footer,header{visibility:hidden;}
-
     .planet-card{background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);
         border-radius:24px;padding:28px 20px;text-align:center;cursor:pointer;
         transition:all 0.3s ease;backdrop-filter:blur(10px);margin-bottom:16px;}
@@ -45,21 +39,17 @@ def load_css():
     .planet-name{color:#fff;font-size:18px;font-weight:800;margin-bottom:6px;}
     .planet-desc{color:rgba(255,255,255,0.65);font-size:13px;}
     .planet-locked{opacity:0.4;cursor:not-allowed;}
-
     .universe-title{text-align:center;color:#fff;font-size:42px;font-weight:900;
         text-shadow:0 0 30px rgba(255,200,100,0.5);margin-bottom:4px;}
     .universe-sub{text-align:center;color:rgba(255,255,255,0.6);font-size:16px;margin-bottom:32px;}
-
     .stButton>button{background:linear-gradient(135deg,#f093fb,#f5576c);color:white;
         font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;border:none;
         border-radius:50px;padding:12px 36px;width:100%;cursor:pointer;transition:all 0.3s;
         box-shadow:0 4px 20px rgba(245,87,108,0.4);}
     .stButton>button:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(245,87,108,0.6);}
-
     .stTextInput>div>div>input,.stSelectbox>div>div{
         background:rgba(255,255,255,0.08)!important;border:1px solid rgba(255,255,255,0.2)!important;
         border-radius:12px!important;color:white!important;font-family:'Nunito',sans-serif!important;}
-
     .stat-chip{display:inline-block;background:rgba(255,255,255,0.1);border-radius:50px;
         padding:6px 18px;color:#fff;font-size:14px;font-weight:700;margin:4px;}
     .question-box{background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);
@@ -74,7 +64,6 @@ def load_css():
     .badge-gold {background:linear-gradient(135deg,#f6d365,#fda085);color:#fff;}
     .badge-blue {background:linear-gradient(135deg,#4facfe,#00f2fe);color:#fff;}
     .badge-green{background:linear-gradient(135deg,#43e97b,#38f9d7);color:#fff;}
-
     .notif{position:fixed;top:70px;right:20px;z-index:9999;
         background:linear-gradient(135deg,#43e97b,#38f9d7);color:#1a1a2e;
         padding:12px 20px;border-radius:12px;font-weight:800;font-size:15px;
@@ -84,7 +73,6 @@ def load_css():
         padding:12px 20px;color:#fff;font-weight:800;font-size:14px;margin-bottom:12px;}
     </style>""", unsafe_allow_html=True)
 
-# ─── Session defaults ──────────────────────────────────────────────────────────
 def init_session():
     defaults = {
         "logged_in": False, "child_name": "", "child_age": 6,
@@ -101,7 +89,6 @@ def init_session():
         if k not in st.session_state:
             st.session_state[k] = v
 
-# ─── DB auto-save ──────────────────────────────────────────────────────────────
 def auto_save():
     if DB_OK and st.session_state.get("profile_id"):
         try:
@@ -115,7 +102,6 @@ def auto_save():
         except Exception as e:
             print(f"auto_save error: {e}")
 
-# ─── Central award function ────────────────────────────────────────────────────
 def global_award(skill: str, stars: int, xp: int, badge: str = None, streak: bool = False):
     gain = SKILL_GAIN_STREAK if streak else SKILL_GAIN_NORMAL
     st.session_state.skill_scores[skill] = min(
@@ -132,14 +118,12 @@ def global_award(skill: str, stars: int, xp: int, badge: str = None, streak: boo
             except: pass
     auto_save()
 
-# ─── Notification ──────────────────────────────────────────────────────────────
 def show_notification():
     if st.session_state.get("show_notif"):
         st.markdown(f"<div class='notif'>{st.session_state.show_notif}</div>",
                     unsafe_allow_html=True)
         st.session_state.show_notif = None
 
-# ─── AUTH SCREEN ───────────────────────────────────────────────────────────────
 def show_auth():
     st.markdown("""
     <div style='text-align:center;padding:30px 0 10px'>
@@ -152,7 +136,6 @@ def show_auth():
     with col:
         tab_child, tab_parent = st.tabs(["🚀 Kid's Login", "👨‍👩‍👧 Parent Login"])
 
-        # ── Child tab ──────────────────────────────────────────────────────────
         with tab_child:
             st.markdown("<div style='color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:12px'>Enter your details to continue your adventure!</div>",
                         unsafe_allow_html=True)
@@ -162,7 +145,7 @@ def show_auth():
                                   ["🧑‍🚀 Astronaut", "🧙 Wizard", "🦸 Superhero", "🧜 Mermaid"],
                                   key="child_avatar_input")
 
-            if st.button("🌟 Begin My Adventure!", width='stretch', key="child_login_btn"):
+            if st.button("🌟 Begin My Adventure!", use_container_width=True, key="child_login_btn"):
                 if not name.strip():
                     st.error("Please enter your name!")
                 else:
@@ -191,7 +174,6 @@ def show_auth():
                     )
                     st.rerun()
 
-        # ── Parent tab ─────────────────────────────────────────────────────────
         with tab_parent:
             p_mode = st.radio("Account Mode", ["🔐 Login", "📝 Register"],
                               horizontal=True, label_visibility="collapsed", key="p_mode_radio")
@@ -200,7 +182,7 @@ def show_auth():
                 p_email = st.text_input("Parent Email", key="p_login_email")
                 p_pwd   = st.text_input("Password", type="password", key="p_login_pwd")
 
-                if st.button("🔐 Parent Login", width='stretch', key="parent_login_btn"):
+                if st.button("🔐 Parent Login", use_container_width=True, key="parent_login_btn"):
                     if not DB_OK:
                         st.error("Database not available.")
                     elif not p_email or not p_pwd:
@@ -219,14 +201,14 @@ def show_auth():
                         else:
                             st.error("❌ Incorrect email or password.")
 
-            else:  # Register
+            else:
                 r_email      = st.text_input("Your Email",       key="r_email")
                 r_pwd        = st.text_input("Choose Password",  type="password", key="r_pwd")
                 r_pwd2       = st.text_input("Confirm Password", type="password", key="r_pwd2")
                 r_child_name = st.text_input("Child's Name",     key="r_child_name")
                 r_child_age  = st.selectbox("Child's Age", list(range(3, 13)), key="r_child_age")
 
-                if st.button("📝 Create Parent Account", width='stretch', key="register_btn"):
+                if st.button("📝 Create Parent Account", use_container_width=True, key="register_btn"):
                     if not all([r_email, r_pwd, r_pwd2, r_child_name]):
                         st.warning("Please fill all fields.")
                     elif r_pwd != r_pwd2:
@@ -242,7 +224,6 @@ def show_auth():
                         else:
                             st.error("Email already registered.")
 
-# ─── PARENT DASHBOARD ──────────────────────────────────────────────────────────
 def show_parent_dashboard():
     import plotly.graph_objects as go
 
@@ -271,13 +252,13 @@ def show_parent_dashboard():
         st.markdown("<br>", unsafe_allow_html=True)
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("🚀 Go to Kid's Login", width='stretch', key="pd_goto_child_nodata"):
+            if st.button("🚀 Go to Kid's Login", use_container_width=True, key="pd_goto_child_nodata"):
                 st.session_state.parent_logged_in = False
                 st.session_state.logged_in        = False
                 st.session_state.current_world    = "home"
                 st.rerun()
         with col2:
-            if st.button("🚪 Parent Logout", width='stretch', key="pd_logout_nodata"):
+            if st.button("🚪 Parent Logout", use_container_width=True, key="pd_logout_nodata"):
                 _parent_logout()
         return
 
@@ -287,7 +268,6 @@ def show_parent_dashboard():
     skills   = stats["skill_scores"]
     sessions = stats.get("sessions", [])
 
-    # KPI row
     k1, k2, k3, k4 = st.columns(4)
     for col, icon, val, label, clr in [
         (k1, "⭐", stars,              "Stars Earned",  "#f6d365"),
@@ -305,7 +285,6 @@ def show_parent_dashboard():
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Radar + skill bars
     c1, c2 = st.columns([3, 2])
     with c1:
         st.markdown("<div style='color:#fff;font-weight:800;font-size:16px;margin-bottom:12px'>🕸 Skill Radar</div>",
@@ -325,7 +304,7 @@ def show_parent_dashboard():
             paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
             font=dict(color='#fff', family='Nunito'), showlegend=False,
             height=320, margin=dict(t=20, b=20, l=20, r=20))
-        st.plotly_chart(fig, width='stretch')
+        st.plotly_chart(fig, use_container_width=True)
 
     with c2:
         st.markdown("<div style='color:#fff;font-weight:800;font-size:16px;margin-bottom:12px'>📈 Skill Levels</div>",
@@ -346,7 +325,6 @@ def show_parent_dashboard():
                 </div>
             </div>""", unsafe_allow_html=True)
 
-    # Session history
     if sessions:
         st.markdown("<br><div style='color:#fff;font-weight:800;font-size:16px;margin-bottom:12px'>📅 Recent Sessions</div>",
                     unsafe_allow_html=True)
@@ -362,7 +340,6 @@ def show_parent_dashboard():
                 <span style='color:rgba(255,255,255,0.4);font-size:12px'>{str(s.get('played_at',''))[:10]}</span>
             </div>""", unsafe_allow_html=True)
 
-    # Recommendations
     st.markdown("<br><div style='color:#fff;font-weight:800;font-size:16px;margin-bottom:12px'>💡 Recommendations</div>",
                 unsafe_allow_html=True)
     for skill, val in skills.items():
@@ -374,7 +351,6 @@ def show_parent_dashboard():
                     f"border-radius:8px;padding:12px 16px;margin-bottom:8px;color:#fff;font-size:14px'>{msg}</div>",
                     unsafe_allow_html=True)
 
-    # PDF download
     st.markdown("<br>", unsafe_allow_html=True)
     try:
         import sys, os
@@ -393,22 +369,21 @@ def show_parent_dashboard():
                 data=pdf,
                 file_name=f"{child_name}_progress_report.pdf",
                 mime="application/pdf",
-                width='stretch'
+                use_container_width=True
             )
     except Exception:
         st.info("Install reportlab to enable PDF reports: pip install reportlab")
 
-    # ── Navigation buttons ─────────────────────────────────────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
     nav1, nav2 = st.columns(2)
     with nav1:
-        if st.button("🚀 Go to Kid's Login", width='stretch', key="pd_goto_child"):
+        if st.button("🚀 Go to Kid's Login", use_container_width=True, key="pd_goto_child"):
             st.session_state.parent_logged_in = False
             st.session_state.logged_in        = False
             st.session_state.current_world    = "home"
             st.rerun()
     with nav2:
-        if st.button("🚪 Parent Logout", width='stretch', key="pd_logout"):
+        if st.button("🚪 Parent Logout", use_container_width=True, key="pd_logout"):
             _parent_logout()
 
 def _parent_logout():
@@ -417,7 +392,6 @@ def _parent_logout():
         st.session_state.pop(k, None)
     st.rerun()
 
-# ─── SIDEBAR ───────────────────────────────────────────────────────────────────
 def show_sidebar():
     if st.session_state.get("parent_logged_in"):
         return
@@ -464,7 +438,7 @@ def show_sidebar():
         for label, world in [("🌌 Universe Map", "home"),
                               ("📊 Dashboard",    "dashboard"),
                               ("🏆 Leaderboard",  "leaderboard")]:
-            if st.button(label, key=f"nav_{world}", width='stretch'):
+            if st.button(label, key=f"nav_{world}", use_container_width=True):
                 st.session_state.current_world = world
                 st.rerun()
 
@@ -482,20 +456,19 @@ def show_sidebar():
             if pdf:
                 st.download_button("📄 My Report", data=pdf,
                     file_name=f"{st.session_state.child_name}_report.pdf",
-                    mime="application/pdf", width='stretch')
+                    mime="application/pdf", use_container_width=True)
         except Exception:
             pass
 
-        if st.button("💾 Save", width='stretch'):
+        if st.button("💾 Save", use_container_width=True):
             auto_save()
             st.success("✅ Saved!")
-        if st.button("🚪 Log Out", width='stretch'):
+        if st.button("🚪 Log Out", use_container_width=True):
             auto_save()
             for k in list(st.session_state.keys()):
                 del st.session_state[k]
             st.rerun()
 
-# ─── WORLD MAP ─────────────────────────────────────────────────────────────────
 WORLDS = [
     {"id":"phonics",    "icon":"🌎","name":"Planet Phonics",    "desc":"Reading & Language",        "color":"#f093fb,#f5576c","skill":"phonics"},
     {"id":"math",       "icon":"🪐","name":"Math Galaxy",        "desc":"Numbers & Problem Solving", "color":"#4facfe,#00f2fe","skill":"math"},
@@ -531,7 +504,6 @@ def show_world_map():
         </div>
     </div>""", unsafe_allow_html=True)
 
-    # ── Switch Account button ──────────────────────────────────────────────────
     _, btn_col, _ = st.columns([3, 2, 3])
     with btn_col:
         if st.button("🔄 Switch Account", use_container_width=True, key="world_map_switch"):
@@ -542,13 +514,11 @@ def show_world_map():
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── Daily Challenge ────────────────────────────────────────────────────────
     random.seed(name + time_mod.strftime("%Y%m%d"))
     daily = random.choice(WORLDS)
     st.markdown(f"<div class='daily-badge'>🎯 <b>Daily Challenge:</b> Play <b>{daily['name']}</b> for +5 Bonus Stars!</div>",
                 unsafe_allow_html=True)
 
-    # ── World Cards ────────────────────────────────────────────────────────────
     cols = st.columns(3)
     for i, w in enumerate(WORLDS):
         pct = min(st.session_state.skill_scores.get(w["skill"], 0), 100)
@@ -569,14 +539,12 @@ def show_world_map():
                 st.session_state.session_start = time_mod.time()
                 st.rerun()
 
-    # ── Badges ─────────────────────────────────────────────────────────────────
     if st.session_state.badges:
         st.markdown("<br><div style='color:#fff;font-weight:800;font-size:18px;margin-bottom:8px'>🏅 My Badges</div>",
                     unsafe_allow_html=True)
         st.markdown("".join([f"<span class='badge badge-gold'>{b}</span>"
                               for b in st.session_state.badges]), unsafe_allow_html=True)
 
-    # ── Mini Leaderboard ───────────────────────────────────────────────────────
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown("<div style='color:#fff;font-weight:800;font-size:18px;margin-bottom:12px'>🏆 Top Explorers</div>",
                 unsafe_allow_html=True)
@@ -623,7 +591,6 @@ def show_world_map():
             st.session_state.current_world = "leaderboard"
             st.rerun()
 
-# ─── BACK BUTTON ───────────────────────────────────────────────────────────────
 def back_btn(world_id=None):
     if st.button("← Back to Universe"):
         if DB_OK and st.session_state.get("profile_id") and world_id:
@@ -636,7 +603,6 @@ def back_btn(world_id=None):
         st.session_state.quiz_state    = {}
         st.rerun()
 
-# ─── ROUTER ────────────────────────────────────────────────────────────────────
 def main():
     load_css()
     init_session()

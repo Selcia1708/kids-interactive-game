@@ -122,7 +122,6 @@ def generate_pdf_report(child_name, age, avatar, stars, xp,
                 # Grid
                 ("GRID",        (0, 0), (-1, -1), 0.5, BORDER),
                 ("LINEBELOW",   (0, 0), (-1, 0),  1.5, hdr_bg),
-                ("ROUNDEDCORNERS", [4]),
             ]
             # Alternating row colours
             for r in range(1, row_count):

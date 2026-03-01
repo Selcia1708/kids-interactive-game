@@ -227,7 +227,7 @@ def show_logic():
             else:
                 show_wrong_feedback(r["ans"], "Think about what the object does, not what it looks like!")
 
-            if st.button("🔮 Next Riddle", use_container_width=True):
+            if st.button("🔮 Next Riddle", use_container_width=True, key="logic_next_riddle"):
                 used = ls.get("riddle_used", [])
                 used.append(ls["riddle_idx"])
                 remaining = [i for i in range(len(RIDDLES)) if i not in used]
@@ -260,7 +260,7 @@ def show_logic():
             sel = st.selectbox(f"Position {rank}", ["-- Select --"] + items, key=f"sort_{rank}_{ls['sort_idx']}")
             selections.append(sel)
 
-        if st.button("✅ Check Order!", use_container_width=True):
+        if st.button("✅ Check Order!", use_container_width=True, key="logic_check_order"):
             if "-- Select --" in selections:
                 st.warning("Please fill all positions!")
             elif selections == sg["correct"]:

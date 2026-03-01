@@ -367,7 +367,7 @@ def show_science():
                     st.success(f"✅ **{sf['item']}** {sf['ans'].lower()}! {sf['reason']}.")
                 else:
                     show_wrong_feedback(sf["ans"], sf["reason"])
-                if st.button("🌊 Next Object!", use_container_width=True):
+                if st.button("🌊 Next Object!", use_container_width=True, key="sci_next_object"):
                     ss["sf_idx"]     += 1
                     ss["sf_answered"] = False
                     ss.pop("sf_chosen", None)
@@ -408,7 +408,7 @@ def show_science():
                     st.success(f"✅ Correct! **{hc['m']}** is a **{hc['heat']}**. {hc['reason']}.")
                 else:
                     show_wrong_feedback(hc["heat"], hc["reason"])
-                if st.button("🌡️ Next Material!", use_container_width=True):
+                if st.button("🌡️ Next Material!", use_container_width=True, key="sci_next_material"):
                     ss["hc_idx"]     += 1
                     ss["hc_answered"] = False
                     ss.pop("hc_chosen", None)

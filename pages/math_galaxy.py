@@ -196,7 +196,7 @@ def show_math():
             show_number_visual(ms["ns_num"])
             st.markdown("<br>", unsafe_allow_html=True)
             user_ans = st.number_input("How many dots?", min_value=0, max_value=100, step=1, key="ns_input")
-            if st.button("✅ Check!", use_container_width=True):
+            if st.button("✅ Check!", use_container_width=True, key="math_check"):
                 ms["ns_answered"] = True
                 ms["ns_user"]     = user_ans
                 if user_ans == ms["ns_num"]:
@@ -209,7 +209,7 @@ def show_math():
                 st.success(f"🎉 Correct! There are **{ms['ns_num']}** dots!")
             else:
                 show_wrong_feedback(ms["ns_num"])
-            if st.button("🔢 Next Dots!", use_container_width=True):
+            if st.button("🔢 Next Dots!", use_container_width=True, key="math_next_dots"):
                 ms.pop("ns_num",      None)
                 ms.pop("ns_answered", None)
                 ms.pop("ns_user",     None)
@@ -230,7 +230,7 @@ def show_math():
             # Show previous best if available
             if ms["speed_score"] > 0:
                 st.markdown(f"<div style='color:#ffd700;font-weight:800;text-align:center;margin-bottom:12px'>🏆 Last Score: {ms['speed_score']} correct!</div>", unsafe_allow_html=True)
-            if st.button("🚀 Start Speed Round!", use_container_width=True):
+            if st.button("🚀 Start Speed Round!", use_container_width=True, key="math_start_speed"):
                 ms["speed_active"] = True
                 ms["speed_score"]  = 0
                 ms["speed_q"]      = gen_question("easy")
@@ -310,7 +310,7 @@ def show_math():
                         ms["speed_q"] = gen_question("easy" if get_diff()=="easy" else "medium")
                         st.rerun()
 
-            if st.button("🛑 Stop Round", use_container_width=True):
+            if st.button("🛑 Stop Round", use_container_width=True, key="math_stop_round"):
                 ms["speed_active"] = False
                 ms["speed_start"]  = None
                 st.rerun()

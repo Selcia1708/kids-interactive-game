@@ -275,7 +275,7 @@ def show_phonics():
         for i, opt in enumerate(story["opts"]):
             with scols[i % 2]:
                 if not qs.get("story_answered"):
-                    if st.button(opt, key=f"story_{qs['story_idx']}_{i}"):
+                    if st.button(opt, key=f"story_{qs['story_idx']}_{i}", use_container_width=True):
                         qs["story_ans"]      = opt
                         qs["story_answered"] = True
                         if opt == story["ans"]:
@@ -292,7 +292,7 @@ def show_phonics():
             else:
                 show_wrong_feedback(story["ans"])
 
-        if st.button("📖 Next Story", key="story_next"):
+        if st.button("📖 Next Story", key="story_next", use_container_width=True):
             qs["story_idx"]    = qs.get("story_idx", 0) + 1
             qs["story_ans"]    = None
             qs["story_answered"] = False
