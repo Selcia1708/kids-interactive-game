@@ -2,6 +2,9 @@ import streamlit as st
 from pathlib import Path
 import time as time_mod
 
+import os
+os.makedirs("database", exist_ok=True)
+
 st.set_page_config(page_title="Kids Learning Universe", page_icon="🌟",
                    layout="wide", initial_sidebar_state="collapsed")
 
